@@ -1,8 +1,9 @@
 /*
   Divyasiddha Shivashok
-  Co-developed with Rohit Joshi
+  Co-developed with Rohit Joshi, Arnav Thube
 */
-//Battleship Project
+//Battleship Game
+
 #include <iostream>
 #include <stdio.h>
 #include <cstdlib>
@@ -145,12 +146,13 @@ void enemy_ship_position()
 void user_BOMB_position()
 {
   /*
-    cNum will be the column char 
+    cNum and rNum will be the column char 
     converted to int through 
     ASCII conversion algortihm
   */ 
-  int row = 0, cNum = 0;
-  char column;
+  int rNum, cNum = 0;
+  char column, row;
+  int row2 = 0;
   
   cout << "\nCaptain, the ship is at your command. Choose a location to hit.";
   
@@ -160,13 +162,13 @@ void user_BOMB_position()
   {
     repeat = false;
     
-    cout << "Enter row of location(1-8): ";
-    cin >> row;
     cout << "Enter column of location(A-H): ";
     cin >> column;
+    cout << "Enter row of location(1-8): ";
+    cin >> row;
     
-    //Decrement row to change it to index scale for array(0-7)
-    row--;
+    // Row to change it to index scale for array(0-7)
+    rNum = row - 49;
     
     //Sets A through H to 0 - 7 using ASCII values
     cNum = column - 65;
@@ -175,7 +177,7 @@ void user_BOMB_position()
       2 Conditions for proper input(for row and column)
       Output a way to re-enter 
     */
-    if (row < 0 || row > 7 ) 
+    if (rNum < 0 || rNum > 7 ) 
     {
       repeat = true; 
       cout << "Invalid Guess. Please enter a value between 1 and 8\n";
@@ -189,19 +191,19 @@ void user_BOMB_position()
   while (repeat == true);
 
   
-  switch (ComputerGrid[row][cNum])
+  switch (ComputerGrid[rNum][cNum])
   {
     case 0: 
     {
       cout << "\nYikes. You missed!";
-      ComputerGrid[row][cNum] = 2;
+      ComputerGrid[rNum][cNum] = 2;
     }
     break;
   
     case 1:
     {
       cout << "\nYou sunk an enemy ship!\n";
-      ComputerGrid[row][cNum] = 3;
+      ComputerGrid[rNum][cNum] = 3;
     }
     break;
   
@@ -300,10 +302,7 @@ void setWinner()
       }
     }
   }
-  
 }
-
-
 
 int main() 
 {
@@ -326,7 +325,7 @@ int main()
 
     cout << "\n\nOn your board, \"S\" represents a placed ship, \"0\" represents the 'unknown waters', \"M\" represents any missed shots, and \"H\" represents a sunk ship.\n\n";
 
-    cout << "\n\nLet's get started. Where do your ships go, captain? For each row pick a number 1 through 8, and for each column pick a letter (capitals only) A through H\n\n";
+    cout << "\n\nLet's get started. Where do your ships go, captain? For each column pick a letter (capitals ONLY) A through H and for every row pick a number 1 through 8\n\n";
 
     //Player choosing their own ships
     for (int count = 1; count <= NumShips; count++) 
@@ -374,7 +373,8 @@ int main()
         break;
       }
       
-      int PlayerRow;
+      char PlayerRow;
+      int PlayerRowNumber = 0;
       char PlayerColumn;
       //int version of char column inputted by user(ASCII)
       int PlayerColumnNumber = 0; 
@@ -383,38 +383,41 @@ int main()
       {
         repeat = false;
         
-        cout << "Row choice for your" << NumberEntry << "ship: ";
-        cin >> PlayerRow;
         cout << "Column choice for your" << NumberEntry << "ship: ";
         cin >> PlayerColumn;
-
-        //proper index for array, so we decrement
-        PlayerRow--; 
         
-        PlayerColumnNumber = PlayerColumn - 65;
+        cout << "Row choice for your" << NumberEntry << "ship: ";
+        cin >> PlayerRow;
         
-        //Checks if row/column selection are properly inputted
-        if (PlayerRow < 0 || PlayerRow > 7 )
-        {
-          repeat = true; 
-          cout << "Make sure your row is between 1 and 8\n";
-        }
-        if (PlayerColumnNumber < 0 || PlayerColumnNumber > 7 )
-        {
-          repeat = true; 
-          cout << "Make sure your column is between A and H\n";
-        }
+        
+          //Proper index for array
+          PlayerRowNumber = PlayerRow - 49;
+        
+          PlayerColumnNumber = PlayerColumn - 65;
+        
+          //Checks if row/column selection are properly inputted
+          if (PlayerRowNumber < 0 || PlayerRowNumber > 7 )
+          {
+            repeat = true; 
+            cout << "Make sure your row is between 1 and 8\n";
+          }
+          if (PlayerColumnNumber < 0 || PlayerColumnNumber > 7 )
+          {
+            repeat = true; 
+            cout << "\nMake sure your column is between A and H\n";
+          }
 
-        if (userGrid[PlayerRow][PlayerColumnNumber]!= 0)
-        {
-          cout << "You can't place multiple ships on the same coordinate. Please try again. \n"; 
-          repeat = true;
+          if (userGrid[PlayerRowNumber][PlayerColumnNumber]!= 0)
+          {
+            cout << "You can't place multiple ships on the same coordinate. Please try again. \n"; 
+            repeat = true;
+          }
         }
-      }
+      
       while (repeat == true);
       
       //assigns a value of 1 to selected coordinates, representing a placed ship
-      userGrid[PlayerRow][PlayerColumnNumber] = 1; 
+      userGrid[PlayerRowNumber][PlayerColumnNumber] = 1; 
       
       cout << "\nYour placed ships so far: \n";
       printUserBoard();
